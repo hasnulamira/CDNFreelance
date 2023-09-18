@@ -1,0 +1,279 @@
+<div class="overlay-spinner" *ngIf="LoaderStatus">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-black" style="width: 3rem; height: 3rem; " role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+</div>
+<div class="container mt-5">
+  <h1>Users</h1>
+  
+  <div class="card">
+    <div class="card-body">
+      <div class="btn-toolbar d-flex justify-content-end pb-3">
+        <div class="me-2">
+          <button type="button" (click)="ResetValue()" data-bs-toggle="modal" data-bs-target="#registerModal" class="btn btn-secondary border-0 rounded-2" role="button">Register</button>
+        </div>
+      </div>
+        <div class="example-table-container border">
+            <table mat-table [dataSource]="dataSource" class="w-100">
+              <ng-container matColumnDef="username">
+                <th class="text-center primary-colour text-white" mat-header-cell *matHeaderCellDef>Username</th>
+                <td class="text-center" mat-cell *matCellDef="let res">{{res.username}}</td>
+              </ng-container>
+              <ng-container matColumnDef="email">
+                <th class="text-center primary-colour text-white" mat-header-cell *matHeaderCellDef>Email</th>
+                <td class="text-center" mat-cell *matCellDef="let res">{{res.email}}</td>
+              </ng-container>
+              <ng-container matColumnDef="phoneno">
+                <th class="text-center primary-colour text-white" mat-header-cell *matHeaderCellDef>Phone No.</th>
+                <td class="text-center" mat-cell *matCellDef="let res">{{res.phoneNum}}</td>
+              </ng-container>
+              <ng-container matColumnDef="action">
+                <th class="text-center primary-colour text-white" mat-header-cell *matHeaderCellDef>Action</th>
+                <td mat-cell *matCellDef="let res">
+                  <div class="btn-toolbar d-flex justify-content-center">
+                    <div class="me-2">
+                      <button type="button" (click)="GetDetail(res.userID)" data-bs-toggle="modal" data-bs-target="#detailModal" class="btn btn-light border rounded-2" role="button">View</button>
+                    </div>
+                    <div class="me-2">
+                      <button type="button" (click)="GetDetail(res.userID)" data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-danger border rounded-2" role="button">Delete</button>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+              <tr mat-row *matRowDef="let test;columns:displayedColumns"></tr>
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell text-center" colspan="10">No data</td>
+              </tr>
+            </table>
+            <mat-paginator class="mat-evelation-z8" (page)="paginatorEvent($event)" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5,10,15]" [length]="RecordCount">
+            </mat-paginator>
+          </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="detailModalLabel">User Detail</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-3">
+            <p>Username</p>
+          </div>
+          <div class="col-1">
+            <p>:</p>
+          </div>
+          <div class="col">
+            <p class="fw-bold">{{ViewUsername}}</p>
+          </div>
+        </div>
+
+        <div class="row pt-2">
+          <div class="col-3">
+            <p>Mail</p>
+          </div>
+          <div class="col-1">
+            <p>:</p>
+          </div>
+          <div class="col">
+            <input type="text" class="form-control border" [(ngModel)]="InputEmail" [ngModelOptions]="{standalone: true}">
+          </div>
+        </div>
+
+        <div class="row pt-2">
+          <div class="col-3">
+            <p>Phone No.</p>
+          </div>
+          <div class="col-1">
+            <p>:</p>
+          </div>
+          <div class="col">
+            <input type="text" class="form-control border" [(ngModel)]="InputPhoneNo" [ngModelOptions]="{standalone: true}">
+          </div>
+        </div>
+
+
+        <div class="table-responsive pt-5">
+          <h5>Skill List</h5>
+          <table class="table" #skillTable>
+              <thead>
+                  <tr class="text-center">
+                      <th scope="col">#</th>
+                      <th scope="col">Skill</th>
+                      <th scope="col">Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr class="text-center" *ngFor="let item of ViewSkillS; let i = index">
+                  <td><span>{{i+1}}</span></td> 
+                  <td><span>{{item.skillName}}</span></td> 
+                  <td><button type="button" class="btn btn-danger border rounded-2" role="button" (click)="DeleteSkill(item.skillID)">Delete</button></td>
+                </tr>
+                <tr class="text-center" >
+                  <td>#</td> 
+                  <td><input type="text" class="border" [(ngModel)]="InputSkill" [ngModelOptions]="{standalone: true}"></td> 
+                  <td><button type="button" (click)="AddSkill(InputSkill)" class="btn btn-dark border-0 shadow rounded-2" role="button" >Add</button></td>
+                </tr>
+              </tbody>
+          </table>
+        </div>
+
+        <div class="table-responsive pt-5">
+          <h5>Hobby List</h5>
+          <table class="table" #skillTable>
+              <thead>
+                  <tr class="text-center">
+                      <th scope="col">#</th>
+                      <th scope="col">Hobby</th>
+                      <th scope="col">Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr class="text-center" *ngFor="let item of ViewHobbies; let i = index">
+                  <td><span>{{i+1}}</span></td> 
+                  <td><span>{{item.hobbyName}}</span></td> 
+                  <td><button type="button" class="btn btn-danger border rounded-2" role="button" (click)="DeleteHobby(item.hobbyID)">Delete</button></td>
+                </tr>
+                <tr class="text-center" >
+                  <td>#</td> 
+                  <td><input type="text" class="border" [(ngModel)]="InputHobby" [ngModelOptions]="{standalone: true}"></td> 
+                  <td><button type="button" (click)="AddHobby(InputHobby)" class="btn btn-dark border-0 shadow rounded-2" role="button" >Add</button></td>
+                </tr>
+              </tbody>
+          </table>
+        </div>
+
+        <div class="btn-toolbar d-flex justify-content-end pt-3">
+          <div class="me-2">
+            <button type="button" (click)="UpdateUser(ViewUserID)" class="btn btn-dark border-0 shadow rounded-2" role="button" data-bs-dismiss="modal">Update</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        Are you sure to delete this record?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="DeleteUser(ViewUserID)">Yes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="detailModalLabel">User Detail</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-3">
+            <p>Username</p>
+          </div>
+          <div class="col-1">
+            <p>:</p>
+          </div>
+          <div class="col">
+            <input type="text" class="form-control border" [(ngModel)]="InputUsername" [ngModelOptions]="{standalone: true}">
+          </div>
+        </div>
+
+        <div class="row pt-2">
+          <div class="col-3">
+            <p>Mail</p>
+          </div>
+          <div class="col-1">
+            <p>:</p>
+          </div>
+          <div class="col">
+            <input type="text" class="form-control border" [(ngModel)]="InputEmail" [ngModelOptions]="{standalone: true}">
+          </div>
+        </div>
+
+        <div class="row pt-2">
+          <div class="col-3">
+            <p>Phone No.</p>
+          </div>
+          <div class="col-1">
+            <p>:</p>
+          </div>
+          <div class="col">
+            <input type="text" class="form-control border" [(ngModel)]="InputPhoneNo" [ngModelOptions]="{standalone: true}">
+          </div>
+        </div>
+        <div class="table-responsive pt-5">
+          <h5>Skill List</h5>
+          <table class="table" #skillTable>
+              <thead>
+                  <tr class="text-center">
+                      <th scope="col">#</th>
+                      <th scope="col">Skill</th>
+                      <th scope="col">Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr class="text-center" *ngFor="let item of ViewSkillS; let i = index">
+                  <td><span>{{i+1}}</span></td> 
+                  <td><span>{{item.skillName}}</span></td> 
+                  <td><button type="button" class="btn btn-danger border rounded-2" role="button" (click)="DeleteSkill(item.skillID)">Delete</button></td>
+                </tr>
+                <tr class="text-center" >
+                  <td>#</td> 
+                  <td><input type="text" class="border" [(ngModel)]="InputSkill" [ngModelOptions]="{standalone: true}"></td> 
+                  <td><button type="button" (click)="AddSkill(InputSkill)" class="btn btn-dark border-0 shadow rounded-2" role="button" >Add</button></td>
+                </tr>
+              </tbody>
+          </table>
+        </div>
+        <div class="table-responsive pt-5">
+          <h5>Hobby List</h5>
+          <table class="table" #skillTable>
+              <thead>
+                  <tr class="text-center">
+                      <th scope="col">#</th>
+                      <th scope="col">Hobby</th>
+                      <th scope="col">Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr class="text-center" *ngFor="let item of ViewHobbies; let i = index">
+                  <td><span>{{i+1}}</span></td> 
+                  <td><span>{{item.hobbyName}}</span></td> 
+                  <td><button type="button" class="btn btn-danger border rounded-2" role="button" (click)="DeleteHobby(item.hobbyID)">Delete</button></td>
+                </tr>
+                <tr class="text-center" >
+                  <td>#</td> 
+                  <td><input type="text" class="border" [(ngModel)]="InputHobby" [ngModelOptions]="{standalone: true}"></td> 
+                  <td><button type="button" (click)="AddHobby(InputHobby)" class="btn btn-dark border-0 shadow rounded-2" role="button" >Add</button></td>
+                </tr>
+              </tbody>
+          </table>
+        </div>
+        <div class="btn-toolbar d-flex justify-content-end pt-3">
+          <div class="me-2">
+            <button type="button" (click)="RegisterUser(InputUsername,InputEmail,InputPhoneNo)" class="btn btn-dark border-0 shadow rounded-2" role="button" data-bs-dismiss="modal">Register</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
